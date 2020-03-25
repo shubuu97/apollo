@@ -35,7 +35,7 @@ The rest of this article focuses on managing a federated graph with the Apollo p
 
 If you're running a distributed GraphQL infrastructure, where federated services [compose](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#fetch-service-capabilities) to form a complete schema, tracking the history of the graph and its underlying services is essential. Running `apollo service:push` from within CI/CD on any federated service registers the overall schema of the graph and updates the graph's [managed configuration](#managed-configuration).
 
-To push a single federated service to Apollo, run `apollo service:push` in CI/CD with the `--serviceName`, `--endpoint`, and `--serviceURL` tags. The CLI will know where to fetch your service's capabilities based on the `--endpoint` flag, and the `--serviceURL` flag indicates where the federated service can be reached by the gateway. The `--serviceName` flag is used as a unique identifier for each federated service.
+To push a single federated service to Apollo, run `apollo service:push` in CI/CD with the `--serviceName`, `--endpoint`, and `--serviceURL` flags. The CLI will know where to fetch your service's capabilities based on the `--endpoint` flag, and the `--serviceURL` flag indicates where the federated service can be reached by the gateway. The `--serviceName` flag is used as a unique identifier for each federated service.
 
 Make sure you have a `.env` file locally with your `ENGINE_API_KEY` defined! To get an API key, click [here](https://engine.apollographql.com). To create a new `.env` file, copy your API key into the following command from your terminal:
 
@@ -60,7 +60,7 @@ Pushing a federated service to Apollo will update the [Services tab](#inspecting
 Removing an federated service from the graph works similarly to registering a service. To delete a service, call `apollo service:delete`. You can also specify the graph variant you want to remove.
 
 ```bash
-apollo service:delete --serviceName=launches --tag=staging
+apollo service:delete --serviceName=launches --variant=staging
 ```
 
 > WARNING! This action cannot be reversed. Also, once deleted, service names cannot be reused within the same graph.
@@ -398,13 +398,13 @@ For instance, in order to have a canary deployment, you might maintain two produ
 
 1. Check changes in "launches" against `prod` and `prod-canary`:
    ```
-   apollo service:check --tag=prod --serviceName=launches
-   apollo service:check --tag=prod-canary --serviceName=launches
+   apollo service:check --variant=prod --serviceName=launches
+   apollo service:check --variant=prod-canary --serviceName=launches
    ```
 1. Deploy changes to "launches" into your production environment. (_Note: This will not roll out changes to the gateway yet_)
-1. Roll over the `prod-canary` graph, containing one gateway container, using `apollo service:push --tag=prod-canary --serviceName=launches`. (_Note: If composition fails due to intermediate changes to the canary graph, new configuration will not be rolled out_)
+1. Roll over the `prod-canary` graph, containing one gateway container, using `apollo service:push --variant=prod-canary --serviceName=launches`. (_Note: If composition fails due to intermediate changes to the canary graph, new configuration will not be rolled out_)
 1. Wait for health checks to pass against the canary, watch dashboards, etc.
-1. After the canary is stable, roll out the changes to the rest of production using `apollo service:push --tag=prod --serviceName=launches`.
+1. After the canary is stable, roll out the changes to the rest of production using `apollo service:push --variant=prod --serviceName=launches`.
 
 Because you can [tag metrics with variants](/schema-registry/#associating-metrics-with-a-variant) as well, you can use [Apollo Graph Manager](https://engine.apollographql.com) to verify a canary's performance before rolling out changes to the rest of the graph. You can also use a similar strategy with variants to support a variety of other advanced deployment workflows, like blue/green deployments.
 
